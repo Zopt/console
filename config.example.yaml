@@ -1,0 +1,7 @@
+# 将此文件复制为 config.yaml 并根据自己的服务器环境进行修改。
+server_password: "请在此填写服务器密码或登录信息"
+commands:
+  restart: ["sudo", "reboot"]
+  shutdown: ["sudo", "shutdown", "-h", "now"]
+  firewall_enable: ["sudo", "ufw", "enable"]
+  firewall_disable: ["sudo", "ufw", "disable"]
