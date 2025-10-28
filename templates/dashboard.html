@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <title>云服务器控制面板</title>
+    <style>
+      body {
+        font-family: "Segoe UI", "PingFang SC", sans-serif;
+        background: #f5f7fa;
+        margin: 0;
+        padding: 0;
+      }
+      header {
+        background: #293241;
+        color: #ffffff;
+        padding: 1.5rem;
+        text-align: center;
+      }
+      main {
+        margin: 2rem auto;
+        max-width: 900px;
+        background: #ffffff;
+        border-radius: 12px;
+        box-shadow: 0 12px 32px rgba(41, 50, 65, 0.1);
+        padding: 2rem 3rem;
+      }
+      h1 {
+        margin: 0;
+        font-size: 1.8rem;
+      }
+      section {
+        margin-bottom: 2rem;
+      }
+      .info-list {
+        list-style: none;
+        padding: 0;
+      }
+      .info-list li {
+        background: #f0f4f8;
+        border-radius: 8px;
+        padding: 0.75rem 1rem;
+        margin-bottom: 0.5rem;
+        word-break: break-all;
+      }
+      .actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 1rem;
+      }
+      form {
+        display: inline-flex;
+      }
+      button {
+        background: #3d5af1;
+        border: none;
+        border-radius: 6px;
+        color: #ffffff;
+        cursor: pointer;
+        font-size: 1rem;
+        padding: 0.75rem 1.5rem;
+        transition: background 0.2s ease-in-out;
+      }
+      button.primary {
+        background: #3d5af1;
+      }
+      button.secondary {
+        background: #43aa8b;
+      }
+      button.danger {
+        background: #f25f5c;
+      }
+      button.warning {
+        background: #f9a826;
+      }
+      button:hover {
+        filter: brightness(0.9);
+      }
+      .message {
+        border-radius: 6px;
+        padding: 0.75rem 1rem;
+        margin-bottom: 1rem;
+      }
+      .message.success {
+        background: #e3fcec;
+        color: #207f4c;
+      }
+      .message.error {
+        background: #ffebee;
+        color: #a52727;
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <h1>云服务器控制面板</h1>
+      <p>通过下方操作按钮管理服务器</p>
+    </header>
+    <main>
+      {% if message %}
+      <div class="message success">{{ message }}</div>
+      {% endif %} {% if error %}
+      <div class="message error">{{ error }}</div>
+      {% endif %}
+      <section>
+        <h2>服务器信息</h2>
+        <ul class="info-list">
+          <li><strong>服务器 IP：</strong> {{ ip_addresses | join(', ') }}</li>
+          <li><strong>服务器密码：</strong> {{ password }}</li>
+          <li><strong>防火墙状态：</strong> {{ firewall_status }}</li>
+        </ul>
+      </section>
+      <section>
+        <h2>控制操作</h2>
+        <div class="actions">
+          {% for action in actions %}
+          <form method="post" action="{{ url_for('perform_action') }}">
+            <input type="hidden" name="action" value="{{ action.name }}" />
+            <button
+              type="submit"
+              class="{{ action.style }}"
+              {% if action.confirm %}data-confirm="{{ action.confirm }}"{% endif %}
+            >
+              {{ action.label }}
+            </button>
+          </form>
+          {% endfor %}
+        </div>
+      </section>
+    </main>
+    <script>
+      document.querySelectorAll('button[data-confirm]').forEach(function (button) {
+        button.addEventListener('click', function (event) {
+          const message = button.getAttribute('data-confirm');
+          if (!window.confirm(message)) {
+            event.preventDefault();
+          }
+        });
+      });
+    </script>
+  </body>
+</html>

@@ -1,0 +1,27 @@
+# 控制面板示例配置
+server_password: "示例密码"
+ip_command: "hostname -I"
+firewall_status_command: "sudo ufw status"
+actions:
+  - name: restart
+    label: "重启服务器"
+    command: "sudo reboot"
+    style: primary
+    confirm: "确定要重启服务器吗？"
+  - name: shutdown
+    label: "关闭服务器"
+    command:
+      - sudo
+      - shutdown
+      - -h
+      - now
+    style: danger
+    confirm: "确定要立即关闭服务器吗？"
+  - name: firewall_enable
+    label: "开启防火墙"
+    command: "sudo ufw enable"
+    style: secondary
+  - name: firewall_disable
+    label: "关闭防火墙"
+    command: "sudo ufw disable"
+    style: danger
