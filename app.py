@@ -15,13 +15,14 @@ service = ControlService(config)
 
 @app.route("/doget", methods=["GET"])
 def dashboard() -> str:
-    ip_addresses = _get_ip_addresses()
+    ip_addresses = _get_ip_addresses(config.ip_command)
     firewall_status = service.get_firewall_status()
     return render_template(
         "dashboard.html",
         ip_addresses=ip_addresses,
         password=config.server_password or "未设置 (请在 config.yaml 中配置)",
         firewall_status=firewall_status,
+        actions=config.actions,
         message=request.args.get("message"),
         error=request.args.get("error"),
     )
@@ -35,10 +36,10 @@ def perform_action():
     return redirect(url_for("dashboard", **query))
 
 
-def _get_ip_addresses() -> List[str]:
-    """Fetch a list of IP addresses using the hostname command."""
+def _get_ip_addresses(command: List[str]) -> List[str]:
+    """Fetch a list of IP addresses using the configured command."""
     try:
-        output = subprocess.check_output(["hostname", "-I"], text=True)
+        output = subprocess.check_output(command, text=True)
     except (FileNotFoundError, subprocess.CalledProcessError):
         return ["未知 (无法获取 IP 地址)"]
     addresses = [addr for addr in output.split() if addr.strip()]
